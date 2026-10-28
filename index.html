@@ -4,7 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>행복철인</title>
-<meta name="theme-color" content="#0f6b5c">
+<meta name="theme-color" content="#ffffff">
+<script>try{var t=localStorage.getItem("ironman-theme");if(t==="light"||t==="dark")document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/png" href="icons/icon-192.png">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
@@ -14,9 +15,12 @@
 <style>
 :root{--paper:#eef2f0;--card:#fff;--ink:#16252a;--sub:#62737a;--line:#e1e8e5;--accent:#0f6b5c;--accent2:#14907b;--soft:#e3f3ef;--warn:#b45309;
 --run:#e2531a;--bike:#2563eb;--swim:#0891b2;--str:#7c3aed;--rest:#8a9499;--race:#ca8a04;
---shadow:0 1px 2px rgba(16,40,35,.06),0 8px 22px rgba(16,40,35,.07);--r:16px}
-@media (prefers-color-scheme:dark){:root{--paper:#0a1012;--card:#121c1f;--ink:#e6eeeb;--sub:#93a3a0;--line:#212f34;--accent:#4fd1b5;--accent2:#2fb89b;--soft:#12302b;
---warn:#fbbf24;--run:#fb8a52;--bike:#6aa6ff;--swim:#2dd4e8;--str:#c4b5fd;--rest:#6b777c;--race:#fbbf24;--shadow:0 1px 2px rgba(0,0,0,.4),0 8px 22px rgba(0,0,0,.35)}}
+--on:#fff;--shadow:0 1px 2px rgba(16,40,35,.06),0 8px 22px rgba(16,40,35,.07);--r:16px}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--paper:#0a1012;--card:#121c1f;--ink:#e6eeeb;--sub:#93a3a0;--line:#212f34;--accent:#4fd1b5;--accent2:#2fb89b;--soft:#12302b;
+--warn:#fbbf24;--run:#fb8a52;--bike:#6aa6ff;--swim:#2dd4e8;--str:#c4b5fd;--rest:#6b777c;--race:#fbbf24;--on:#06201b;--shadow:0 1px 2px rgba(0,0,0,.4),0 8px 22px rgba(0,0,0,.35)}}
+:root[data-theme="dark"]{--paper:#0a1012;--card:#121c1f;--ink:#e6eeeb;--sub:#93a3a0;--line:#212f34;--accent:#4fd1b5;--accent2:#2fb89b;--soft:#12302b;
+--warn:#fbbf24;--run:#fb8a52;--bike:#6aa6ff;--swim:#2dd4e8;--str:#c4b5fd;--rest:#6b777c;--race:#fbbf24;--on:#06201b;--shadow:0 1px 2px rgba(0,0,0,.4),0 8px 22px rgba(0,0,0,.35)}
+:root{color-scheme:light dark}:root[data-theme="light"]{color-scheme:light}:root[data-theme="dark"]{color-scheme:dark}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html{scroll-padding-top:70px}
 body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.55 system-ui,-apple-system,"Pretendard","Malgun Gothic","Apple SD Gothic Neo",sans-serif;-webkit-font-smoothing:antialiased}
@@ -40,11 +44,12 @@ main{max-width:920px;margin:0 auto;padding:14px 14px calc(92px + env(safe-area-i
 .sub{color:var(--sub);font-size:13px}
 .num{font-variant-numeric:tabular-nums}
 .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
-.note{font-size:13.5px;border-radius:12px;padding:9px 12px;margin:10px 0 0;background:var(--soft);color:var(--ink)}
+.note{font-size:13.5px;border-radius:12px;padding:10px 12px;margin:10px 0 0;background:var(--soft);color:var(--ink);line-height:1.6;overflow-wrap:anywhere}
 .warn{font-size:13px;color:var(--warn);margin:8px 0 0}
 .slot{font-weight:700;margin:0 0 10px;font-size:12px;letter-spacing:.6px;color:var(--sub);text-transform:uppercase}
 .hero{background:linear-gradient(135deg,#0f6b5c 0%,#14907b 55%,#1aa58b 100%);color:#fff;border:none;position:relative;overflow:hidden}
-@media (prefers-color-scheme:dark){.hero{background:linear-gradient(135deg,#0d4d44 0%,#136b5d 60%,#178470 100%)}}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .hero{background:linear-gradient(135deg,#0d4d44 0%,#136b5d 60%,#178470 100%)}}
+:root[data-theme="dark"] .hero{background:linear-gradient(135deg,#0d4d44 0%,#136b5d 60%,#178470 100%)}
 .hero::after{content:"";position:absolute;right:-40px;top:-40px;width:160px;height:160px;border-radius:50%;background:rgba(255,255,255,.08)}
 .hero .sub{color:rgba(255,255,255,.78)}
 .hero-main{display:flex;align-items:center;gap:14px;position:relative;z-index:1}
@@ -72,10 +77,12 @@ main{max-width:920px;margin:0 auto;padding:14px 14px calc(92px + env(safe-area-i
 .item .d{color:var(--sub);font-size:13px;margin-top:4px}
 .chg{font-size:12.5px;color:var(--warn);margin-top:3px}
 .pr{display:inline-block;font-size:10.5px;font-weight:700;padding:1px 7px;border-radius:999px;background:color-mix(in srgb,var(--ink) 8%,transparent);color:var(--sub)}
-.pr-핵심{background:var(--accent);color:#fff}
+.pr-핵심{background:var(--accent);color:var(--on)}
 .ctrl{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:10px;font-size:13px}
-.qd{background:var(--c);color:#fff;border:none;border-radius:999px;padding:8px 18px;font:inherit;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 2px 8px color-mix(in srgb,var(--c) 40%,transparent)}
-.qd.on{background:transparent;color:var(--c);box-shadow:inset 0 0 0 2px var(--c)}
+.qd{background:var(--accent);color:var(--on);border:none;border-radius:999px;padding:8px 20px;font:inherit;font-size:14px;font-weight:700;cursor:pointer}
+.qd.on{background:transparent;color:var(--accent);box-shadow:inset 0 0 0 2px var(--accent)}
+.ctrl select{border-radius:999px;padding:7px 10px;background:color-mix(in srgb,var(--ink) 6%,var(--card));border-color:transparent}
+.ctrl button.ghost{border:none;background:none;color:var(--sub);text-decoration:underline;text-underline-offset:3px;padding:6px 4px}
 .qd:active{transform:scale(.97)}
 select,input{background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:6px 8px;font:inherit;font-size:13px}
 input.n{width:112px}
@@ -90,10 +97,18 @@ tr.cur td:first-child{box-shadow:inset 3px 0 var(--accent)}
 .bar{height:6px;border-radius:99px;background:var(--line);min-width:54px;margin-top:3px;overflow:hidden}
 .bar i{display:block;height:100%;border-radius:99px;background:var(--accent2)}
 .dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;background:var(--accent)}
-button.btn{background:var(--accent);color:#fff;border:none;border-radius:12px;padding:9px 16px;cursor:pointer;font:inherit;font-size:14px;font-weight:700}
-html:not(.x) button.btn{color:#fff}
-@media (prefers-color-scheme:dark){button.btn{color:#06201b}}
-button.ghost{background:none;border:1px solid var(--line);color:var(--ink);border-radius:10px;padding:6px 11px;cursor:pointer;font:inherit;font-size:13px}
+button.btn{background:var(--accent);color:var(--on);border:none;border-radius:12px;padding:9px 16px;cursor:pointer;font:inherit;font-size:14px;font-weight:700}
+button.ghost,label.ghost{display:inline-block;background:none;border:1px solid var(--line);color:var(--ink);border-radius:10px;padding:6px 11px;cursor:pointer;font:inherit;font-size:13px}
+.field{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:11px 0;border-top:1px solid var(--line)}
+.field:first-of-type{border-top:none}
+.field>span{font-size:14px;font-weight:600}
+.field select,.field input{max-width:58%;min-width:0}
+.field input.n{width:120px;text-align:right}
+.hint{font-size:12.5px;color:var(--sub);line-height:1.55;margin:8px 0 0}
+.h2{font-size:15px;font-weight:800;margin:0 0 6px}
+.seg2{display:flex;gap:4px;background:var(--paper);border-radius:12px;padding:4px;width:100%}
+.seg2 button{flex:1;background:none;border:none;color:var(--sub);font:inherit;font-size:14px;padding:9px 6px;border-radius:9px;cursor:pointer}
+.seg2 button.on{background:var(--card);color:var(--accent);font-weight:700;box-shadow:0 1px 4px rgba(0,0,0,.15)}
 .stat{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin-top:10px}
 .stat div{background:var(--paper);border-radius:12px;padding:9px 12px}
 .stat strong{display:block;font-size:17px;font-variant-numeric:tabular-nums}
@@ -192,6 +207,14 @@ let curTab = 'today', curW = 0, cursor = null, shortMode = false;
 /* ==================================================================
    3. 유틸
    ================================================================== */
+const THEME_KEY = 'ironman-theme';
+function getTheme(){ try{ return localStorage.getItem(THEME_KEY) || 'auto'; }catch(e){ return 'auto'; } }
+function applyTheme(v){
+  const r = document.documentElement;
+  if(v==='light' || v==='dark') r.setAttribute('data-theme', v); else r.removeAttribute('data-theme');
+  const dark = v==='dark' || (v!=='light' && window.matchMedia && matchMedia('(prefers-color-scheme:dark)').matches);
+  const m = document.querySelector('meta[name="theme-color"]'); if(m) m.content = dark ? '#121c1f' : '#ffffff';
+}
 const pad = n => String(n).padStart(2,'0');
 const ymd = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
 const fmt = d => `${d.getMonth()+1}/${d.getDate()}`;
@@ -811,36 +834,46 @@ function addBody(){
 }
 
 function renderSet(){
-  const s = STATE.settings, g = GOALS;
+  const s = STATE.settings, g = GOALS, th = getTheme();
   const lg = Object.keys(STATE.legacy.logs||{}).length, lc = Object.keys(STATE.legacy.closed||{}).length;
   const blocked = SAVE.blocked ? `<div class="warn">저장 데이터를 읽지 못해 자동 저장을 멈췄어요 (${esc(SAVE.blocked)}). 기존 저장은 그대로 보존돼 있어요. 백업 파일을 불러오거나, 손상된 저장을 버리고 새로 시작할 수 있어요.</div>
-    <div class="row"><button class="ghost" data-act="resetBlocked">손상된 저장 버리고 새로 시작</button></div>` : '';
+    <div class="row" style="margin-top:8px"><button class="ghost" data-act="resetBlocked">손상된 저장 버리고 새로 시작</button></div>` : '';
+  const goalNote = s.goal==='b350' ? '3시간 50분대 목표: 페이스 5:27/km. 처음 5km는 안정적으로, 장거리 후반에만 목표 페이스를 적용해요.'
+    : s.goal==='sub4' ? 'sub-4 목표: 페이스 5:41/km. 장거리 후반 2~3km에만 목표 페이스를 적용해요.'
+    : '완주 중심: 페이스 제한 없이 달리기·걷기 전략도 가능해요. 목표 페이스 안내는 나오지 않아요.';
   return `<div class="panel">
-    <div class="row"><span class="sub">마라톤 목표</span>
-      <select data-set="goal">${Object.entries(g).map(([k,v])=>opt(k,v.label,s.goal)).join('')}</select></div>
-    <div class="note">${s.goal==='b350'?'3시간 50분대 목표: 페이스 5:27/km. 처음 5km는 안정적으로, 장거리 후반에만 목표 페이스를 적용합니다.':s.goal==='sub4'?'sub-4 목표: 페이스 5:41/km. 장거리 후반 2~3km에만 목표 페이스를 적용합니다.':'완주 중심: 페이스 제한 없이 달리기·걷기 전략도 가능합니다. 목표 페이스 안내는 나오지 않아요.'}
-    목표를 바꾸면 대회 전략·점검 문구가 바뀝니다. 훈련 분량은 목표에 따라 자동으로 바꾸지 않아요.</div>
-    <div class="row" style="margin-top:8px"><span class="sub">긴 운동 요일</span>
-      <select data-set="longDay">${opt('sat','토요일',s.longDay)}${opt('sun','일요일',s.longDay)}</select>
-      <span class="sub">야외 장거리 라이딩</span>
-      <select data-set="outdoorLong">${opt('yes','가능',s.outdoorLong)}${opt('no','불가 (실내)',s.outdoorLong)}</select></div>
-    <div class="row" style="margin-top:8px"><span class="sub">실내 FTP (W)</span>
-      <input class="n" type="number" min="50" max="500" step="1" data-set="ftp" value="${esc(s.ftp)}">
-      <span class="sub">시작 훈련량</span>
-      <select data-set="startLevel">${opt('lower','낮게 (기본)',s.startLevel)}${opt('normal','보통',s.startLevel)}</select></div>
-    <div class="note">설정 변경은 아직 확정되지 않은 주차부터 적용돼요. 확정된 주차는 마감 당시 계획을 그대로 유지해요.</div>
-    <div class="sub">시작 기준 입력값: 최근 4주 약 100km(주평균 약 25km), 최장 달리기 24km, 수영 주 1회 700m, FTP 2.87 W/kg(약 223W), 야외 라이딩 가능.</div>
+    <div class="h2">화면</div>
+    <div class="seg2">
+      <button data-act="theme" data-v="auto" class="${th==='auto'?'on':''}">자동</button>
+      <button data-act="theme" data-v="light" class="${th==='light'?'on':''}">라이트</button>
+      <button data-act="theme" data-v="dark" class="${th==='dark'?'on':''}">다크</button>
+    </div>
+    <div class="hint">자동은 폰의 화면 모드를 따라가요. 이 기기에만 적용돼요.</div>
   </div>
   <div class="panel">
-    <div class="sub"><b>저장과 백업</b></div>
+    <div class="h2">마라톤 목표</div>
+    <div class="field"><span>목표</span><select data-set="goal">${Object.entries(g).map(([k,v])=>opt(k,v.label,s.goal)).join('')}</select></div>
+    <div class="hint">${goalNote} 목표를 바꾸면 대회 전략·점검 문구가 바뀌어요. 훈련 분량은 목표에 따라 자동으로 바꾸지 않아요.</div>
+  </div>
+  <div class="panel">
+    <div class="h2">훈련 환경</div>
+    <div class="field"><span>긴 운동 요일</span><select data-set="longDay">${opt('sat','토요일',s.longDay)}${opt('sun','일요일',s.longDay)}</select></div>
+    <div class="field"><span>야외 장거리 라이딩</span><select data-set="outdoorLong">${opt('yes','가능',s.outdoorLong)}${opt('no','불가 (실내)',s.outdoorLong)}</select></div>
+    <div class="field"><span>실내 FTP (W)</span><input class="n" type="number" min="50" max="500" step="1" data-set="ftp" value="${esc(s.ftp)}"></div>
+    <div class="field"><span>시작 훈련량</span><select data-set="startLevel">${opt('lower','낮게 (기본)',s.startLevel)}${opt('normal','보통',s.startLevel)}</select></div>
+    <div class="hint">설정 변경은 아직 확정되지 않은 주차부터 적용돼요. 확정된 주차는 마감 당시 계획을 그대로 유지해요.</div>
+    <div class="hint">시작 기준: 최근 4주 약 100km(주평균 약 25km), 최장 달리기 24km, 수영 주 1회 700m, FTP 2.87 W/kg(약 223W), 야외 라이딩 가능.</div>
+  </div>
+  <div class="panel">
+    <div class="h2">저장과 백업</div>
     ${blocked}
-    <div class="sub" style="margin-top:6px">${saveLine()}</div>
-    <div class="note">기록은 이 기기·이 앱(또는 브라우저)에만 저장돼요. 홈 화면에 설치한 앱과 브라우저의 저장 공간은 서로 따로일 수 있으니 (특히 아이폰) 설치 직후 처음 한 번 JSON 백업을 옮겨 주세요. 기기 간 자동 동기화는 없어요. 폰과 PC를 같이 쓰면 JSON 백업 파일을 옮겨서 불러오세요.</div>
-    <div class="row">
+    <div class="hint" style="margin-top:0">${saveLine()}</div>
+    <div class="note">기록은 이 기기·이 앱(또는 브라우저)에만 저장돼요. 홈 화면에 설치한 앱과 브라우저의 저장 공간은 따로일 수 있어서(특히 아이폰), 설치 직후 처음 한 번 JSON 백업을 옮겨 주세요. 기기 간 자동 동기화는 없어요. 폰과 PC를 같이 쓰면 JSON 백업 파일을 옮겨서 불러오세요.</div>
+    <div class="row" style="margin-top:12px">
       <button class="btn" data-act="export">JSON 백업 내려받기</button>
-      <label class="ghost" style="cursor:pointer">JSON 불러오기<input type="file" accept="application/json" data-act="importFile" style="display:none"></label>
+      <label class="ghost" style="cursor:pointer;padding:9px 14px">JSON 불러오기<input type="file" accept="application/json" data-act="importFile" style="display:none"></label>
     </div>
-    ${lg||lc ? `<div class="sub" style="margin-top:8px">이전 버전 기록 ${lg}개 · 확정 ${lc}주는 과거 기록으로 보존했어요. 현재 세션과 자동으로 연결하지 않았어요.</div>` : ''}
+    ${lg||lc ? `<div class="hint">이전 버전 기록 ${lg}개 · 확정 ${lc}주는 과거 기록으로 보존했어요. 현재 세션과 자동으로 연결하지 않았어요.</div>` : ''}
   </div>`;
 }
 function saveLine(){
@@ -1073,6 +1106,7 @@ document.addEventListener('click', e => {
   if(a==='prevDay'){ cursor = cursor.d>0 ? {w:cursor.w,d:cursor.d-1} : (cursor.w>0 ? {w:cursor.w-1,d:6} : cursor); refresh(); }
   if(a==='nextDay'){ cursor = cursor.d<6 ? {w:cursor.w,d:cursor.d+1} : (cursor.w<WEEKS-1 ? {w:cursor.w+1,d:0} : cursor); refresh(); }
   if(a==='today'){ cursor = null; refresh(); }
+  if(a==='theme'){ try{ localStorage.setItem(THEME_KEY, t.dataset.v); }catch(e){} applyTheme(t.dataset.v); refresh(); }
   if(a==='setShort'){ shortMode = true; refresh(); }
   if(a==='setFull'){ shortMode = false; refresh(); }
   if(a==='quick'){
@@ -1107,6 +1141,7 @@ document.addEventListener('click', e => {
 });
 
 /* 초기화 */
+applyTheme(getTheme());
 SAVE.supported = testStorage();
 if(navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(()=>{});
 autoLoad();
