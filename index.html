@@ -12,61 +12,104 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="행복철인">
 <style>
-:root{--paper:#f2f4f1;--card:#fff;--ink:#1b2a2f;--sub:#5f6e73;--line:#dde3e0;--accent:#0f6b5c;--warn:#b45309;
---run:#c2410c;--bike:#1d4ed8;--swim:#0e7490;--str:#6d28d9;--rest:#8a9499;--race:#a16207}
-@media (prefers-color-scheme:dark){:root{--paper:#0f1416;--card:#162024;--ink:#e3ebe8;--sub:#93a19e;--line:#27343a;--accent:#4fd1b5;
---warn:#fbbf24;--run:#fb923c;--bike:#60a5fa;--swim:#22d3ee;--str:#c4b5fd;--rest:#6b777c;--race:#fbbf24}}
-*{box-sizing:border-box}
-body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.6 system-ui,-apple-system,"Malgun Gothic","Apple SD Gothic Neo",sans-serif}
-header{background:var(--card);border-bottom:1px solid var(--line);padding:calc(12px + env(safe-area-inset-top)) 14px 0;position:sticky;top:0;z-index:5}
-h1{font-size:18px;margin:0 0 4px}
-#status{font-size:12px;color:var(--sub);margin-bottom:6px}
-nav{display:flex;gap:2px;overflow-x:auto}
-nav button{background:none;border:none;border-bottom:2px solid transparent;color:var(--sub);padding:8px 10px;cursor:pointer;font:inherit;white-space:nowrap}
-nav button.on{color:var(--accent);border-bottom-color:var(--accent);font-weight:600}
-main{max-width:920px;margin:0 auto;padding:14px 14px calc(14px + env(safe-area-inset-bottom))}
+:root{--paper:#eef2f0;--card:#fff;--ink:#16252a;--sub:#62737a;--line:#e1e8e5;--accent:#0f6b5c;--accent2:#14907b;--soft:#e3f3ef;--warn:#b45309;
+--run:#e2531a;--bike:#2563eb;--swim:#0891b2;--str:#7c3aed;--rest:#8a9499;--race:#ca8a04;
+--shadow:0 1px 2px rgba(16,40,35,.06),0 8px 22px rgba(16,40,35,.07);--r:16px}
+@media (prefers-color-scheme:dark){:root{--paper:#0a1012;--card:#121c1f;--ink:#e6eeeb;--sub:#93a3a0;--line:#212f34;--accent:#4fd1b5;--accent2:#2fb89b;--soft:#12302b;
+--warn:#fbbf24;--run:#fb8a52;--bike:#6aa6ff;--swim:#2dd4e8;--str:#c4b5fd;--rest:#6b777c;--race:#fbbf24;--shadow:0 1px 2px rgba(0,0,0,.4),0 8px 22px rgba(0,0,0,.35)}}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{scroll-padding-top:70px}
+body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.55 system-ui,-apple-system,"Pretendard","Malgun Gothic","Apple SD Gothic Neo",sans-serif;-webkit-font-smoothing:antialiased}
+header{background:color-mix(in srgb,var(--card) 88%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--line);
+  padding:calc(10px + env(safe-area-inset-top)) 16px 10px;position:sticky;top:0;z-index:5}
+.top{display:flex;align-items:center;gap:10px;max-width:920px;margin:0 auto}
+.logo{width:38px;height:38px;border-radius:11px;box-shadow:0 2px 8px rgba(0,0,0,.18);flex:none}
+.ttl{flex:1;min-width:0}
+h1{font-size:18px;margin:0;line-height:1.2;letter-spacing:-.2px}
+#status{font-size:11px;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chip{flex:none;font-size:12px;font-weight:700;padding:5px 10px;border-radius:999px;background:var(--soft);color:var(--accent);white-space:nowrap}
+.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:6;display:flex;justify-content:space-around;background:color-mix(in srgb,var(--card) 92%,transparent);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-top:1px solid var(--line);padding:6px 6px calc(6px + env(safe-area-inset-bottom))}
+.tabbar button{flex:1;max-width:120px;background:none;border:none;color:var(--sub);display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 2px;cursor:pointer;font:inherit;font-size:11px;border-radius:12px}
+.tabbar svg{width:23px;height:23px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.tabbar button.on{color:var(--accent);font-weight:700}
+.tabbar button.on svg{stroke-width:2.2}
+main{max-width:920px;margin:0 auto;padding:14px 14px calc(92px + env(safe-area-inset-bottom))}
 .hide{display:none}
-.panel{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px;margin-bottom:12px}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px;margin-bottom:12px;box-shadow:var(--shadow)}
 .sub{color:var(--sub);font-size:13px}
 .num{font-variant-numeric:tabular-nums}
 .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
-.note{font-size:13.5px;border-left:3px solid var(--accent);padding:6px 10px;margin:8px 0;background:color-mix(in srgb,var(--accent) 8%,transparent)}
-.warn{font-size:13px;color:var(--warn);margin:6px 0}
-.slot{font-weight:600;margin:10px 0 2px;font-size:14px}
-.day{display:grid;grid-template-columns:70px 1fr;gap:10px;padding:10px 0;border-top:1px solid var(--line)}
-.day:first-child{border-top:none}
-.dayhead{font-weight:600;font-size:14px}
-.item{border-left:3px solid var(--c);padding:2px 0 8px 10px;margin-bottom:10px}
-.item b{font-weight:600}
-.item .d{color:var(--sub);font-size:13px}
-.chg{font-size:12.5px;color:var(--warn)}
-.pr{display:inline-block;font-size:11px;padding:1px 6px;border-radius:4px;margin-right:6px;border:1px solid var(--line);color:var(--sub)}
-.pr-핵심{color:var(--accent);border-color:var(--accent);font-weight:600}
-.ctrl{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:6px;font-size:13px}
-select,input{background:var(--paper);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:4px 6px;font:inherit;font-size:13px}
-input.n{width:110px}
+.note{font-size:13.5px;border-radius:12px;padding:9px 12px;margin:10px 0 0;background:var(--soft);color:var(--ink)}
+.warn{font-size:13px;color:var(--warn);margin:8px 0 0}
+.slot{font-weight:700;margin:0 0 10px;font-size:12px;letter-spacing:.6px;color:var(--sub);text-transform:uppercase}
+.hero{background:linear-gradient(135deg,#0f6b5c 0%,#14907b 55%,#1aa58b 100%);color:#fff;border:none;position:relative;overflow:hidden}
+@media (prefers-color-scheme:dark){.hero{background:linear-gradient(135deg,#0d4d44 0%,#136b5d 60%,#178470 100%)}}
+.hero::after{content:"";position:absolute;right:-40px;top:-40px;width:160px;height:160px;border-radius:50%;background:rgba(255,255,255,.08)}
+.hero .sub{color:rgba(255,255,255,.78)}
+.hero-main{display:flex;align-items:center;gap:14px;position:relative;z-index:1}
+.hero-txt{flex:1;min-width:0}
+.hero-day{font-size:22px;font-weight:800;letter-spacing:-.4px;line-height:1.25}
+.pill{display:inline-block;font-size:11.5px;font-weight:700;padding:3px 9px;border-radius:999px;background:rgba(255,255,255,.18);margin-top:6px}
+.ring{--p:0;width:78px;height:78px;border-radius:50%;flex:none;display:grid;place-items:center;
+  background:conic-gradient(#fff calc(var(--p)*1%),rgba(255,255,255,.22) 0)}
+.ring i{font-style:normal;width:62px;height:62px;border-radius:50%;background:#12806e;display:grid;place-items:center;text-align:center;font-weight:800;font-size:15px;line-height:1.1}
+.ring i small{display:block;font-size:10px;font-weight:600;opacity:.8}
+.hero .row{position:relative;z-index:1}
+.hero button.ghost{color:#fff;border-color:rgba(255,255,255,.35);background:rgba(255,255,255,.1)}
+.seg{display:inline-flex;background:rgba(255,255,255,.16);border-radius:999px;padding:3px}
+.seg button{background:none;border:none;color:rgba(255,255,255,.85);font:inherit;font-size:12.5px;padding:5px 12px;border-radius:999px;cursor:pointer}
+.seg button.on{background:#fff;color:#0f6b5c;font-weight:700}
+.item{--c:var(--rest);display:grid;grid-template-columns:44px 1fr;gap:12px;padding:12px;border-radius:14px;margin-bottom:10px;
+  background:color-mix(in srgb,var(--c) 9%,var(--card));border:1px solid color-mix(in srgb,var(--c) 22%,var(--line))}
+.item:last-child{margin-bottom:0}
+.ico{width:44px;height:44px;border-radius:13px;display:grid;place-items:center;font-size:22px;background:color-mix(in srgb,var(--c) 18%,var(--card))}
+.item.done{opacity:.72}
+.item.done .tt{text-decoration:line-through;text-decoration-color:color-mix(in srgb,var(--ink) 40%,transparent)}
+.tt{font-weight:700;font-size:15px;line-height:1.35}
+.meta{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:3px}
+.min{font-weight:700;color:var(--c);font-size:13.5px}
+.item .d{color:var(--sub);font-size:13px;margin-top:4px}
+.chg{font-size:12.5px;color:var(--warn);margin-top:3px}
+.pr{display:inline-block;font-size:10.5px;font-weight:700;padding:1px 7px;border-radius:999px;background:color-mix(in srgb,var(--ink) 8%,transparent);color:var(--sub)}
+.pr-핵심{background:var(--accent);color:#fff}
+.ctrl{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:10px;font-size:13px}
+.qd{background:var(--c);color:#fff;border:none;border-radius:999px;padding:8px 18px;font:inherit;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 2px 8px color-mix(in srgb,var(--c) 40%,transparent)}
+.qd.on{background:transparent;color:var(--c);box-shadow:inset 0 0 0 2px var(--c)}
+.qd:active{transform:scale(.97)}
+select,input{background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:6px 8px;font:inherit;font-size:13px}
+input.n{width:112px}
 table{width:100%;border-collapse:collapse;font-size:13.5px}
-th,td{padding:6px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
-th{color:var(--sub);font-weight:500}
+th,td{padding:8px 6px;border-bottom:1px solid var(--line);text-align:left;vertical-align:middle}
+th{color:var(--sub);font-weight:600;font-size:12px}
+td,th{white-space:nowrap}
 tr.clk{cursor:pointer}
-button.btn{background:var(--accent);color:#fff;border:none;border-radius:7px;padding:7px 14px;cursor:pointer;font:inherit;font-size:14px}
-button.ghost{background:none;border:1px solid var(--line);color:var(--ink);border-radius:7px;padding:5px 10px;cursor:pointer;font:inherit;font-size:13px}
-.stat{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin-top:8px}
-.stat div{background:var(--paper);border-radius:8px;padding:8px 10px}
+tr.clk:active{background:var(--soft)}
+tr.cur td{background:var(--soft)}
+tr.cur td:first-child{box-shadow:inset 3px 0 var(--accent)}
+.bar{height:6px;border-radius:99px;background:var(--line);min-width:54px;margin-top:3px;overflow:hidden}
+.bar i{display:block;height:100%;border-radius:99px;background:var(--accent2)}
+.dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;background:var(--accent)}
+button.btn{background:var(--accent);color:#fff;border:none;border-radius:12px;padding:9px 16px;cursor:pointer;font:inherit;font-size:14px;font-weight:700}
+html:not(.x) button.btn{color:#fff}
+@media (prefers-color-scheme:dark){button.btn{color:#06201b}}
+button.ghost{background:none;border:1px solid var(--line);color:var(--ink);border-radius:10px;padding:6px 11px;cursor:pointer;font:inherit;font-size:13px}
+.stat{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin-top:10px}
+.stat div{background:var(--paper);border-radius:12px;padding:9px 12px}
 .stat strong{display:block;font-size:17px;font-variant-numeric:tabular-nums}
+.day{display:grid;grid-template-columns:62px 1fr;gap:10px;padding:12px 0;border-top:1px solid var(--line)}
+.day:first-child{border-top:none}
+.dayhead{font-weight:800;font-size:15px}
+.today-mark{color:var(--accent)}
 </style>
 </head>
 <body>
 <header>
-  <h1>행복철인 <span class="sub" style="font-weight:400">2027 대회 훈련 플랜</span></h1>
-  <div id="status"></div>
-  <nav>
-    <button data-tab="today" class="on">오늘</button>
-    <button data-tab="week">주간</button>
-    <button data-tab="road">로드맵</button>
-    <button data-tab="body">체중·인바디</button>
-    <button data-tab="set">설정·저장</button>
-  </nav>
+  <div class="top">
+    <img class="logo" src="icons/icon-192.png" alt="">
+    <div class="ttl"><h1>행복철인</h1><div id="status"></div></div>
+    <div class="chip" id="dday"></div>
+  </div>
 </header>
 <main>
   <section id="tab-today"></section>
@@ -75,6 +118,13 @@ button.ghost{background:none;border:1px solid var(--line);color:var(--ink);borde
   <section id="tab-body" class="hide"></section>
   <section id="tab-set" class="hide"></section>
 </main>
+<nav class="tabbar">
+  <button data-tab="today" class="on"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6l1.4 1.4M17 17l1.4 1.4M5.6 18.4L7 17M17 7l1.4-1.4"/></svg>오늘</button>
+  <button data-tab="week"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M8 3v4M16 3v4M3.5 10h17"/></svg>주간</button>
+  <button data-tab="road"><svg viewBox="0 0 24 24"><path d="M5 21V4M5 4h11l-2 4 2 4H5"/></svg>로드맵</button>
+  <button data-tab="body"><svg viewBox="0 0 24 24"><path d="M3 12h3l2-6 4 12 2.5-8 1.5 2H21"/></svg>체중</button>
+  <button data-tab="set"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/></svg>설정</button>
+</nav>
 
 <script>
 /* ==================================================================
@@ -531,46 +581,64 @@ const PRIO = {핵심:0, 보조:1, 선택:2};
 const opt = (v, label, cur) => `<option value="${v}" ${(cur??'')===v?'selected':''}>${label}</option>`;
 function findPain(id){ return STATE.painOpen.find(p => p.id===id); }
 
+const EMO = {run:'🏃', bike:'🚴', swim:'🏊', str:'🏋️', race:'🏁', rest:'🌙'};
 function itemHTML(it){
   const lg = STATE.logs[it.id] || {};
   const d = DISC[it.disc] || DISC.rest;
   const isRest = it.disc==='rest', isRace = it.disc==='race';
   const change = (it.base!=null && it.min!=null && it.base!==it.min) ? `<div class="chg">원래 ${it.base}분 → ${it.min}분</div>` : '';
   const plan = it.min ? `${it.min}분${it.dist?' · '+it.dist:''}` : '';
+  const ico = `<div class="ico">${EMO[it.disc]||'•'}</div>`;
   if(it.hold){
-    return `<div class="item" style="--c:${d.c}">
-      <div><span class="pr pr-${it.prio}">${it.prio}</span><b>${esc(it.title)}</b> <span class="sub">수행 보류</span></div>
+    return `<div class="item" style="--c:${d.c}">${ico}<div>
+      <div class="tt">${esc(it.title)}</div><div class="meta"><span class="pr pr-${it.prio}">${it.prio}</span><span class="sub">수행 보류</span></div>
       <div class="d">${esc(it.detail)}</div>
       <div class="warn">${esc(DISC[it.hold.disc].l)} 통증(${esc(it.hold.area)})이 아직 해소되지 않았어요. 상태를 확인하기 전에는 이 종목을 수행하지 마세요. 다른 종목으로 자동 대체하지 않아요.</div>
       <div class="ctrl"><select data-id="${it.hold.id}" data-f="area">${AREAS.map(a=>opt(a,a,it.hold.area)).join('')}</select>
         <button class="ghost" data-act="painClear" data-id="${it.hold.id}">해소 확인 (상태 확인 완료)</button></div>
-    </div>`;
+    </div></div>`;
   }
   const pn = findPain(it.id);
   const warn = inconsistency(it, lg);
+  const hasStatus = lg.status==='done' || lg.status==='partial';
   let ctrl = '';
+  if(!isRest && !isRace) ctrl += `<button class="qd ${lg.status==='done'?'on':''}" data-act="quick" data-id="${it.id}">${lg.status==='done'?'✓ 완료됨':'완료'}</button>`;
   if(!isRest && !isRace) ctrl += `<select data-id="${it.id}" data-f="status">${opt('','미기록',lg.status)}${opt('done','완료',lg.status)}${opt('partial','일부',lg.status)}${opt('skip','미수행',lg.status)}</select>`;
-  if(it.min && it.disc!=='str') ctrl += `<input class="n" type="number" min="0" step="5" placeholder="실제 분 (선택)" value="${lg.actual??''}" data-id="${it.id}" data-f="actual">`;
+  if(it.min && it.disc!=='str' && (hasStatus || (lg.actual!==undefined && lg.actual!==''))) ctrl += `<input class="n" type="number" min="0" step="5" placeholder="실제 분 (선택)" value="${lg.actual??''}" data-id="${it.id}" data-f="actual">`;
   if(!isRest && !isRace && !pn) ctrl += `<button class="ghost" data-act="painAdd" data-id="${it.id}" data-disc="${it.disc}" data-week="${it.id.split('-')[0]}" data-d="${it.d}">통증 기록</button>`;
   if(pn) ctrl += `<select data-id="${it.id}" data-f="area">${AREAS.map(a=>opt(a,a,pn.area)).join('')}</select><button class="ghost" data-act="painClear" data-id="${it.id}">통증 해소 확인</button>`;
-  return `<div class="item" style="--c:${d.c}">
-    <div><span class="pr pr-${it.prio}">${it.prio}</span><b>${esc(it.title)}</b> ${plan?`<span class="sub num">${plan}</span>`:''}</div>
+  return `<div class="item ${lg.status==='done'?'done':''}" style="--c:${d.c}">${ico}<div>
+    <div class="tt">${esc(it.title)}</div>
+    <div class="meta"><span class="pr pr-${it.prio}">${it.prio}</span>${plan?`<span class="min num">${plan}</span>`:''}</div>
     <div class="d">${esc(it.detail)}</div>${change}
-    ${pn ? `<div class="sub">통증 기록 있음 (${esc(pn.area)}) · 수행 기록은 그대로 유지돼요.</div>` : ''}
+    ${pn ? `<div class="sub" style="margin-top:4px">통증 기록 있음 (${esc(pn.area)}) · 수행 기록은 그대로 유지돼요.</div>` : ''}
     ${warn ? `<div class="warn">${esc(warn)}</div>` : ''}
     ${ctrl?`<div class="ctrl">${ctrl}</div>`:''}
-  </div>`;
+  </div></div>`;
 }
 function painBanner(){
   if(!STATE.painOpen.length) return '';
   return `<div class="warn">미해소 통증 ${STATE.painOpen.length}건: ${STATE.painOpen.map(p=>`${DISC[p.disc].l}(${esc(p.area)})`).join(', ')} · 해소 확인 버튼을 누르기 전까지 해당 종목은 조정이 유지돼요.</div>`;
 }
 
+function ringHTML(wk){
+  const r = wk.st, pct = r.total ? Math.min(100, Math.round(r.entered/r.total*100)) : 0;
+  return `<div class="ring" style="--p:${pct}"><i><span>${r.entered}/${r.total}<small>이번 주</small></span></i></div>`;
+}
+function weekPreview(i){
+  return PLAN[i].days.map((day,d) => {
+    const names = day.items.filter(x=>x.disc!=='rest').map(x=>`${EMO[x.disc]}${x.min?x.min+'분':''}`).join(' ');
+    return `<div class="row" style="justify-content:space-between;padding:5px 0;border-top:1px solid var(--line)"><b>${DAYS[d]}</b><span class="sub">${names||'휴식'}</span></div>`;
+  }).join('');
+}
 function renderToday(now = new Date()){
   const s = todayStatus(now);
-  if(s.state==='before') return `<div class="panel"><b>훈련 시작 전</b><div class="sub">2026년 11월 2일(월) 시작 · D-${s.days}</div>
-    <div class="note">시작 전에는 설정 탭에서 목표·긴 운동 요일·FTP를 확인해 두세요. 훈련 목록은 시작 후에 나타나요.</div></div>`;
-  if(s.state==='after') return `<div class="panel"><b>훈련 기간이 끝났어요</b><div class="sub">군산 T100(2027.5.30) 이후입니다. 주간 탭에서 기록을 확인할 수 있어요.</div></div>`;
+  if(s.state==='before') return `<div class="panel hero"><div class="hero-main"><div class="hero-txt"><div class="sub">훈련 시작까지</div>
+      <div class="hero-day">D-${s.days}</div><span class="pill">2026.11.2(월) 시작</span></div></div></div>
+    <div class="panel"><div class="slot">첫 주 미리보기</div>${weekPreview(0)}
+      <div class="note">시작 전에는 설정 탭에서 목표·긴 운동 요일·FTP를 확인해 두세요.</div></div>`;
+  if(s.state==='after') return `<div class="panel hero"><div class="hero-main"><div class="hero-txt"><div class="hero-day">수고하셨어요 🎉</div>
+      <div class="sub" style="margin-top:4px">군산 T100(2027.5.30) 이후예요. 주간·로드맵 탭에서 기록을 확인할 수 있어요.</div></div></div></div>`;
   if(!cursor) cursor = {w:s.w, d:s.d};
   const isToday = cursor.w===s.w && cursor.d===s.d;
   const wk = PLAN[cursor.w], day = wk.days[cursor.d], date = dayDate(cursor.w, cursor.d);
@@ -581,19 +649,23 @@ function renderToday(now = new Date()){
   const pm = byPrio(day.items.filter(x => x.slot==='pm' && keep(x)));
   const hasTrain = day.items.some(x => x.disc!=='rest' && x.disc!=='race');
   const rests = day.items.filter(x => x.disc==='rest');
-  return `<div class="panel">
-    <div class="row">
-      <button class="ghost" data-act="prevDay">◀ 전날</button>
-      <b class="num">${cursor.w+1}주차 · ${DAYS[cursor.d]} ${fmt(date)}</b>
-      <button class="ghost" data-act="nextDay">다음날 ▶</button>
-      ${isToday?'':'<button class="ghost" data-act="today">오늘로</button>'}
+  return `<div class="panel hero">
+    <div class="hero-main">
+      <div class="hero-txt">
+        <div class="sub">${isToday ? '오늘' : '다른 날짜를 보고 있어요'} · ${cursor.w+1}주차</div>
+        <div class="hero-day num">${DAYS[cursor.d]}요일 ${fmt(date)}</div>
+        <span class="pill">${PH[phaseOf(cursor.w)]}</span>
+      </div>
+      ${ringHTML(wk)}
     </div>
-    <div class="sub">${isToday ? '오늘' : '오늘이 아닌 날짜를 보고 있어요'} · ${PH[phaseOf(cursor.w)]}</div>
-    <div class="row" style="margin-top:6px"><button class="ghost" data-act="toggleShort">${shortMode?'전체 보기':'바쁜 날: 핵심만 보기'}</button></div>
-    ${shortMode ? '<div class="note">핵심 세션만 표시해요. 빠진 보조·선택 운동은 다음 날로 넘기지 않아요.</div>' : ''}
-    ${painBanner()}
-    ${wk.adj.notes.length ? `<div class="sub" style="margin-top:6px">이번 주 조정: ${wk.adj.notes.map(esc).join(' / ')}</div>` : ''}
+    <div class="row" style="margin-top:12px;justify-content:space-between">
+      <div class="row"><button class="ghost" data-act="prevDay">◀</button><button class="ghost" data-act="nextDay">▶</button>${isToday?'':'<button class="ghost" data-act="today">오늘로</button>'}</div>
+      <div class="seg"><button data-act="setFull" class="${shortMode?'':'on'}">전체</button><button data-act="setShort" class="${shortMode?'on':''}">핵심만</button></div>
+    </div>
   </div>
+  ${shortMode ? '<div class="note" style="margin:-4px 0 12px">핵심 세션만 표시해요. 빠진 보조·선택 운동은 다음 날로 넘기지 않아요.</div>' : ''}
+  ${painBanner() ? `<div class="panel">${painBanner()}</div>` : ''}
+  ${wk.adj.notes.length ? `<div class="panel"><div class="slot">이번 주 조정</div><div class="sub">${wk.adj.notes.map(esc).join(' / ')}</div></div>` : ''}
   ${race.map(x => `<div class="panel"><div class="slot">대회 당일</div>${itemHTML(x)}</div>`).join('')}
   ${am.length ? `<div class="panel"><div class="slot">아침</div>${am.map(itemHTML).join('')}</div>` : ''}
   ${pm.length ? `<div class="panel"><div class="slot">점심·저녁</div>${pm.map(itemHTML).join('')}</div>` : ''}
@@ -670,13 +742,15 @@ function renderWeek(){
 }
 
 function renderRoad(){
+  const st0 = todayStatus(new Date()), curI = st0.state==='in' ? st0.w : -1;
+  const maxH = Math.max(...PLAN.map(p => weekTotals(p.days,p.i).min))/60 || 1;
   const rows = PLAN.map(p => {
     const t = weekTotals(p.days, p.i);
     const s = weekStart(p.i), e = new Date(s.getTime()+6*864e5);
     const st = p.closed ? `확정 ${Math.round(p.st.rate*100)}%` : '진행 중';
-    return `<tr class="clk" data-goto="${p.i}">
+    return `<tr class="clk ${p.i===curI?'cur':''}" data-goto="${p.i}">
       <td class="num">${p.i+1}</td><td class="num">${fmt(s)}~${fmt(e)}</td><td>${PH[phaseOf(p.i)]}</td>
-      <td class="num">${Math.round(t.min/60*10)/10}h</td><td class="num">${t.run.toFixed(1)}</td>
+      <td class="num">${Math.round(t.min/60*10)/10}h<div class="bar"><i style="width:${Math.round(t.min/60/maxH*100)}%"></i></div></td><td class="num">${t.run.toFixed(1)}</td>
       <td class="num">${t.swim}</td><td class="num">${Math.round(t.bike)}</td><td class="num">${t.strN}</td><td>${st}</td></tr>`;
   }).join('');
   return `<div class="panel">
@@ -937,6 +1011,12 @@ function focusSel(el){
   if(el.dataset.nav) return `[data-nav="${el.dataset.nav}"]`;
   return null;
 }
+const RACES = [{n:'대구 마라톤', d:new Date(2027,1,28)}, {n:'군산 T100', d:new Date(2027,4,30)}];
+function updateDday(){
+  const t = new Date(); t.setHours(0,0,0,0);
+  const nx = RACES.find(r => r.d >= t), el = document.getElementById('dday');
+  el.textContent = nx ? `${nx.n} D-${Math.ceil((nx.d-t)/864e5)}` : '시즌 완료';
+}
 function refresh(){
   const sel = focusSel(document.activeElement);
   const y = window.scrollY;
@@ -944,12 +1024,13 @@ function refresh(){
   renderAll();
   autoSave();                                             // 먼저 저장을 시도한 뒤 결과를 표시
   document.getElementById('status').textContent = saveLine();
+  updateDday();
   window.scrollTo(0, y);
   if(sel){ const el = document.querySelector(sel); if(el) el.focus(); }
 }
 function showTab(name){
   curTab = name;
-  document.querySelectorAll('nav button').forEach(b => b.classList.toggle('on', b.dataset.tab===name));
+  document.querySelectorAll('.tabbar button').forEach(b => b.classList.toggle('on', b.dataset.tab===name));
   ['today','week','road','body','set'].forEach(t => document.getElementById('tab-'+t).classList.toggle('hide', t!==name));
   refresh();
 }
@@ -957,7 +1038,7 @@ function showTab(name){
 /* ==================================================================
    9. 이벤트
    ================================================================== */
-document.querySelector('nav').addEventListener('click', e => {
+document.querySelector('.tabbar').addEventListener('click', e => {
   const b = e.target.closest('button'); if(b) showTab(b.dataset.tab);
 });
 document.addEventListener('change', e => {
@@ -985,14 +1066,20 @@ document.addEventListener('change', e => {
   }
 });
 document.addEventListener('click', e => {
-  const t = e.target;
+  const t = e.target.closest('[data-act]') || e.target;
   const row = t.closest('tr[data-goto]');
   if(row){ curW = +row.dataset.goto; showTab('week'); window.scrollTo(0,0); return; }
   const a = t.dataset.act; if(!a) return;
   if(a==='prevDay'){ cursor = cursor.d>0 ? {w:cursor.w,d:cursor.d-1} : (cursor.w>0 ? {w:cursor.w-1,d:6} : cursor); refresh(); }
   if(a==='nextDay'){ cursor = cursor.d<6 ? {w:cursor.w,d:cursor.d+1} : (cursor.w<WEEKS-1 ? {w:cursor.w+1,d:0} : cursor); refresh(); }
   if(a==='today'){ cursor = null; refresh(); }
-  if(a==='toggleShort'){ shortMode = !shortMode; refresh(); }
+  if(a==='setShort'){ shortMode = true; refresh(); }
+  if(a==='setFull'){ shortMode = false; refresh(); }
+  if(a==='quick'){
+    const lg = STATE.logs[t.dataset.id] = {...(STATE.logs[t.dataset.id]||{})};
+    lg.status = lg.status==='done' ? '' : 'done';
+    markDirty(); refresh();
+  }
   if(a==='close') closeWeek(+t.dataset.w);
   if(a==='reopen'){
     const w = +t.dataset.w;
@@ -1028,6 +1115,7 @@ curW = (() => { const s = todayStatus(new Date()); return s.state==='in' ? s.w :
 PLAN = generate();
 renderAll();
 document.getElementById('status').textContent = saveLine();
+updateDday();
 if('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) navigator.serviceWorker.register('sw.js').catch(()=>{});
 </script>
 </body>
