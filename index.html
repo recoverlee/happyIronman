@@ -168,16 +168,32 @@ const LADDER = [60, 80, 95];                              // 지속주 단계 (�
 const CTX = {hist:[], level:60, V:60, lastCheck:null};    // V: 실제 수행으로 확인된 단계 · level: 이번 주 배정 · lastCheck: 직전 배정 정보
 const TRI_OTHER = [30,40,45,50,55,55,55,55,45,30,0,0];       // 주말 보조 쉬운 달리기 (분) · 지속주 주차에는 없음 (선택 세션)
 const TRI_THU = [45,50,50,55,55,55,55,55,55,45,30,0];   // 목요일 쉬운 달리기 (분) · T100 지속주로 이어지는 단계적 증가
-const CHECK_BIKE = {21:120, 24:150, 26:150};            // 지속주 주 토요일 자전거 (분) · 지속주는 일요일, 해당 주는 브릭 없음
-const TRI_SWIM_LONG = {21:55, 24:60, 27:55};            // 2km 이상 쉬지 않고 헤엄치는 날 (분) · 100m 2:30 기준 약 2.2~2.4km · 금요일
-const OPEN_WATER = {26:40, 28:30};                      // 야외 수영 + 슈트 연습 (분) · 5월
+const CHECK_BIKE = {21:60, 24:75, 26:75};               // 지속주 주 주말 다른 날 가벼운 자전거 (분) · 주말 장시간 운동은 하루만, 해당 주는 브릭 없음
+const TRI_SWIM_LONG = {21:55, 24:60, 27:55};            // 2km 이상 쉬지 않고 헤엄치는 날 (분) · 100m 2:30 기준 약 2.2~2.4km · 금요일 (강습 없는 날, 강습과 별도 리허설)
+const OPEN_WATER = {26:40, 28:30};                      // 야외 수영 + 슈트 연습 (분) · 5월 · 금요일
+/* 수영 강습: 월·수 17:00 · 회당 예상 1,000~1,500m. 강습 시간은 미확정이라 분 단위(min)를 넣지 않음 → 완료율·자동 조정 계산에 쓰지 않음 */
+const CLASS = {time:'17:00', lo:1000, hi:1500, days:{swimA:0, swimB:2}};
+const CLASS_PRIO = {base:'보조', build:'보조', peak:'보조', taper:'보조', tbase:'핵심', tbuild:'핵심', ttaper:'보조', recover:'선택', race:'선택'};
+const CLASS_NOTE = {
+  base:'강하게 한 날은 아래에 강도를 기록해 두세요. 다음 날 훈련 강도를 조절하는 참고가 돼요.',
+  build:'강하게 한 날은 아래에 강도를 기록해 두세요. 다음 날 훈련 강도를 조절하는 참고가 돼요.',
+  peak:'마라톤 피크 주: 참석은 하되 강습에서 힘을 아껴 달리기 세션을 우선하세요.',
+  taper:'테이퍼: 가볍게 참석하고 강하게 하지 마세요. 피곤하면 쉬어도 돼요. 평소 분량을 채울 필요 없어요.',
+  tbase:'강하게 한 날은 아래에 강도를 기록해 두세요. 다음 날 훈련 강도를 조절하는 참고가 돼요.',
+  tbuild:'강하게 한 날은 아래에 강도를 기록해 두세요. 다음 날 훈련 강도를 조절하는 참고가 돼요.',
+  ttaper:'테이퍼: 가볍게 참석하고 강하게 하지 마세요. 피곤하면 쉬어도 돼요. 평소 분량을 채울 필요 없어요.',
+  recover:'회복 주: 참석 여부는 몸 상태로 정하세요. 참석해도 아주 가볍게, 피로·통증이 있으면 쉬세요.',
+  race:'대회 주: 가볍게 참석하거나 쉬어도 돼요. 평소 분량을 채울 필요 없어요.'};
+const EFFORT = {easy:'가볍게', mod:'보통', hard:'강하게'};
 const EASY = {base:40,build:50,peak:55,taper:30,race:20,recover:20,tbase:45,tbuild:45,ttaper:30};   // 평일 쉬운 달리기 · 주간 거리를 평일로 분산
 const QUAL = {base:45,build:55,peak:55,taper:35,race:20,tbase:40,tbuild:50,ttaper:35};
 const MAR_FRI = {8:30,9:35,10:30,11:40,12:45,13:45,14:30};          // 금요일 쉬운 달리기 (분) · 피크 주 장거리 비중 낮추기
 const BIKE_TUE = {base:50,build:55,peak:45,taper:35,race:20,recover:30,tbase:50,tbuild:60,ttaper:40};
-const STR_DAYS = {base:[0,1,3],build:[0,1,3],peak:[0,3],taper:[1],tbase:[0,1,3],tbuild:[0,3],ttaper:[1],race:[],recover:[1]};
+// 근력: [기록 키, 요일]. 하체는 수요일 아침(주요 달리기 사이), 상체는 목요일 아침(다음 강습까지 간격 확보). 월·수 17시 수영 강습 전에는 상체를 피함
+const STR_PLAN = {base:[['str0',2],['str3',3]], build:[['str0',2],['str3',3]], peak:[['str0',2],['str3',3]], taper:[['str3',3]],
+                  tbase:[['str0',2],['str3',3]], tbuild:[['str0',2],['str3',3]], ttaper:[['str3',3]], race:[], recover:[]};
 const STR_MIN  = {base:60,build:55,peak:50,taper:35,tbase:60,tbuild:55,ttaper:35,race:0,recover:20};
-const STR_NAME = {0:'하체 (스쿼트·루마니안 데드·레그프레스)', 1:'상체 (벤치·숄더프레스·사이드 레이즈)', 3:'등·팔 (로우·풀다운·컬·트라이셉스)'};
+const STR_NAME = {str0:'하체 (스쿼트·루마니안 데드·레그프레스)', str3:'상체 (벤치·로우·풀다운·숄더프레스) · 어깨는 가볍게'};
 const STR_DETAIL = {base:'3세트 × 8~10회 · 여유 있는 무게', build:'3세트 × 8~10회', peak:'3세트 × 5~6회 · 무게는 올리고 세트는 줄이기',
                     taper:'2세트 × 10회 · 피로 남기지 않기', tbase:'3세트 × 8~10회', tbuild:'3세트 × 6~8회 · 점프 동작 없이', ttaper:'2세트 × 10회 · 가볍게'};
 const SWIM_SEC = 150;   // 현재 확인된 100m당 2:30. 향상은 자동으로 가정하지 않음 (실제 확인 후 갱신)
@@ -308,14 +324,24 @@ function buildWeek(i, adj){
     }
     days[d].items.push({id:`${i}-${key}`, key, d, slot, disc, title, detail, min:m, base, dist, prio});
   };
+  /* 월·수 17시 수영 강습: 분(min)은 비워 두고 거리만 예상치로 표시 (시간 미확정) */
+  const addClass = key => {
+    const d = CLASS.days[key];
+    days[d].items.push({id:`${i}-${key}`, key, d, slot:'pm', disc:'swim', title:'수영 강습', cls:true, time:CLASS.time,
+      detail:`자유형 위주 · 세부 구성은 강습을 따라요 (별도 드릴·인터벌 처방 없음) · 거리와 강도는 강습 내용에 따라 달라질 수 있어요. ${CLASS_NOTE[ph]}`,
+      min:null, base:null, dist:`예상 ${CLASS.lo.toLocaleString()}~${CLASS.hi.toLocaleString()}m`, prio:CLASS_PRIO[ph]});
+  };
+  const strengthNote = (key) => key==='str0'
+    ? (ph==='peak' ? ' · 오늘 17:00 강습이 있어요 (킥이 무거울 수 있어요) · 토요일 장거리 전 하체는 이날이 마지막' : ' · 오늘 17:00 강습이 있어요 (킥이 무거울 수 있어요) · 한계까지 하지 않기')
+    : ' · 다음 강습(월)까지 간격이 있어요 · 어깨 피로를 남기지 않기';
 
-  /* 대회 주: 대회는 일요일, 근력 없음, 달리기는 짧고 익숙하게 나눠서 */
+  /* 대회 주: 대회는 일요일, 근력 없음, 달리기는 짧고 익숙하게 나눠서 · 강습은 선택 */
   if(ph==='race'){
-    add(0,'swimA','pm','swim','수영 가볍게','자유형 편하게 · 기록 욕심 없이', swimMin(i), '보조');
+    addClass('swimA');
     add(1,'runT','pm','run','쉬운 달리기 (익숙한 페이스)','6:00~6:30/km · 대화 가능', 20, '보조');
-    if(adj.quality) add(2,'runQ','pm','run','스트라이드','100m 가속 4~6회 · 충분히 쉰 뒤 가볍게', QUAL.race, '선택');
-    else add(2,'runQ','pm','run','짧은 조깅','6:30/km · 가속 생략 (피로 신호)', QUAL.race, '선택');
-    add(3,'bikeE','pm','bike','실내 자전거 가볍게', `${powerTxt(0.45,0.55)} · 다리 풀기`, 20, '선택');
+    addClass('swimB');
+    if(adj.quality) add(3,'runQ','pm','run','스트라이드','100m 가속 4~6회 · 충분히 쉰 뒤 가볍게', QUAL.race, '선택');
+    else add(3,'runQ','pm','run','짧은 조깅','6:30/km · 가속 생략 (피로 신호)', QUAL.race, '선택');
     add(4,'runF','pm','run','짧은 조깅 (대회 확인)','6:30/km · 몸 상태 체크', 15, '보조');
     add(5,'restS','all','rest','휴식','완전 휴식 · 준비물·수면 확인', null, '핵심');
     const race = i===16 ? '대구 마라톤 풀코스 (대회)' : '군산 T100 (대회)';
@@ -323,55 +349,53 @@ function buildWeek(i, adj){
     return days;
   }
 
-  /* 회복 주: 인터벌·장거리 자동 배정 없음, 달리기는 통증·피로 없을 때만 */
+  /* 회복 주: 인터벌·장거리 자동 배정 없음, 달리기는 통증·피로 없을 때만 · 강습은 선택 */
   if(ph==='recover'){
-    add(0,'restM','all','rest','휴식','완전 휴식', null, '핵심');
+    addClass('swimA');
     add(1,'mob','am','str','가동성 · 스트레칭','20분 · 통증 부위가 있으면 기록', STR_MIN.recover, '선택');
-    add(1,'bikeT','pm','bike','실내 자전거 쉬운 주행', `${powerTxt(0.4,0.5)} · 30분 · 통증·피로 확인`, BIKE_TUE.recover, '보조');
-    add(2,'swimW','pm','swim','수영 쉬운 주행','자유형 편하게 · 기술 위주', 25, '보조');
+    addClass('swimB');
     add(3,'runE','pm','run','쉬운 달리기 (선택)','통증·피로가 없을 때만 20분 · 아니면 쉬기', EASY.recover, '선택');
-    add(4,'swimF','pm','swim','수영 가볍게','20분', 20, '선택');
+    add(4,'bikeT','pm','bike','실내 자전거 쉬운 주행', `${powerTxt(0.4,0.5)} · 30분 · 통증·피로 확인`, BIKE_TUE.recover, '보조');
     add(longIdx,'long','pm','bike','주말 쉬운 자전거 (선택)', `${powerTxt(0.45,0.55)} · 45분 · 인터벌 없음`, 45, '선택');
     add(otherIdx,'restO','all','rest','휴식','완전 휴식', null, '핵심');
     return days;
   }
 
-  /* 근력: 평일 아침 */
-  (STR_DAYS[ph] || []).forEach(d => add(d, 'str'+d, 'am', 'str', `근력 · ${STR_NAME[d]}`, STR_DETAIL[ph], STR_MIN[ph], '보조'));
+  /* 근력: 평일 아침 (하체는 수요일, 상체는 목요일) */
+  (STR_PLAN[ph] || []).forEach(([key,d]) => add(d, key, 'am', 'str', `근력 · ${STR_NAME[key]}`, STR_DETAIL[ph] + strengthNote(key), STR_MIN[ph], '보조'));
+
+  addClass('swimA');
+  addClass('swimB');
 
   if(!tri){
-    /* 마라톤 블록 */
-    add(0,'swimA','pm','swim','수영 지구력','자유형 연속 · 킥 포함 · 편하게 지속', swimMin(i), '보조');
-    if(i>=8 && i<=13) add(1,'swimB','am','swim','수영 기술·지속','드릴 + 지속 · 빌드업·피크 주에도 수영을 주 2회로 유지 (짧게)', 25, '보조');
-    add(1,'bikeT','pm','bike','실내 자전거 (존2)', `${powerTxt(0.55,0.7)} · 케이던스 90 전후`, BIKE_TUE[ph], '보조');
+    /* 마라톤 블록: 화 주요 달리기 · 목 쉬운 달리기 · 금 자전거(또는 분산 달리기) · 주말 장거리 */
     const q = marQuality(i);
-    if(!adj.quality) add(2,'runQ','pm','run','쉬운 달리기 (강도 조정)','6:00~6:30/km · 고강도 제외', EASY[ph], '보조');
-    else add(2,'runQ','pm','run', q.t, q.d, q.m, q.p);
+    if(!adj.quality) add(1,'runQ','pm','run','쉬운 달리기 (강도 조정)','6:00~6:30/km · 고강도 제외', EASY[ph], '보조');
+    else add(1,'runQ','pm','run', q.t, q.d, q.m, q.p);
     add(3,'runE','pm','run','쉬운 달리기','6:00~6:30/km · 대화 가능', EASY[ph], '보조');
-    if(i>=8 && i<=14) add(4,'runF','pm','run','쉬운 달리기 (분산)','6:00~6:30/km · 평일에 거리를 나눠서 장거리 비중 낮추기', MAR_FRI[i], '보조');
-    else add(4,'swimB','pm','swim','수영 기술·지속','드릴 + 지속 · 현재 2:30/100m 기준', swimMin(i), i<=3 ? '선택' : '보조');
+    if(i>=8 && i<=14) add(4,'runF','pm','run','쉬운 달리기 (분산)','6:00~6:30/km · 평일에 거리를 나눠서 장거리 비중 낮추기 · 금요일 달리기 주간에는 자전거를 생략해요', MAR_FRI[i], '보조');
+    else add(4,'bikeT','pm','bike','실내 자전거 (존2)', `${powerTxt(0.55,0.7)} · 케이던스 90 전후 · 화요일에서 금요일로 옮겼어요`, BIKE_TUE[ph], '보조');
     if(MAR_LONG[i]>0) add(longIdx,'long','pm','run','장거리 달리기', `${mpText(i, adj)} · 1시간 넘으면 탄수화물·물 보급`, MAR_LONG[i], '핵심');
     else add(longIdx,'restL','all','rest','휴식','완전 휴식 또는 가벼운 스트레칭', null, '핵심');
     add(otherIdx,'bikeO','pm','bike','자전거 (선택)', `${powerTxt(0.5,0.6)} · 30~40분`, 40, '선택');
   } else {
-    /* T100 블록 */
-    add(0,'swimA','pm','swim','수영 지구력','드릴 + 지속 · 편하게 길게', swimMin(i), '보조');
-    let bt = {t:'실내 자전거 (존2)', d:powerTxt(0.55,0.75), p:'보조'};
-    if(ph==='tbuild' && !odd && !adj.noInterval){
-      const r = reps(sc(BIKE_TUE[ph],'bike'), 10);
-      bt = {t:'실내 자전거 인터벌', d:`${powerTxt(0.95,1.05)} · 5분 × ${r}, 회복 5분`, p:'핵심'};
-    }
-    add(1,'bikeT','pm','bike', bt.t, bt.d, BIKE_TUE[ph], bt.p);
+    /* T100 블록: 화 달리기 · 목 자전거 · 금 쉬운 달리기 · 주말 장거리 (고강도 달리기와 자전거는 주 안에서 번갈아) */
     let rq;
     if(!adj.quality) rq = {t:'쉬운 달리기 (강도 조정)', d:'6:00/km · 고강도 제외', m:EASY[ph], p:'보조'};
     else if(ph==='tbuild' && odd) rq = {t:'템포 런', d:'5:20~5:35/km 구간 포함 · 쉽게 시작', m:QUAL.tbuild, p:'핵심'};
     else if(ph==='tbuild') rq = {t:'쉬운 달리기 + 스트라이드', d:'6:00/km · 마지막 4×20초 가속', m:EASY.tbuild, p:'보조'};
     else if(ph==='ttaper') rq = {t:'페이스 확인', d:'5:10~5:20/km 짧게 4~5회', m:QUAL.ttaper, p:'핵심'};
     else rq = {t:'쉬운 달리기', d:'6:00/km 전후 · 인터벌 없음', m:EASY[ph], p:'보조'};
-    add(2,'runQ','pm','run', rq.t, rq.d, rq.m, rq.p);
-    add(3,'runE','pm','run','쉬운 달리기','6:00/km 전후 · 대화 가능', TRI_THU[i-18], '보조');
-    if(TRI_SWIM_LONG[i]) add(4,'swimB','pm','swim','수영 2km+ 연속','2km 이상 쉬지 않고 연속 · 벽 턴 후 바로 출발 · 편한 페이스 · 100m 2:30 기준 약 2.2km 이상 (대회 거리 리허설)', TRI_SWIM_LONG[i], '핵심');
-    else add(4,'swimB','pm','swim','수영 속도','인터벌 + 지속 · 현재 2:30/100m 기준', swimMin(i), '보조');
+    add(1,'runQ','pm','run', rq.t, rq.d, rq.m, rq.p);
+    let bt = {t:'실내 자전거 (존2)', d:powerTxt(0.55,0.75), p:'보조'};
+    if(ph==='tbuild' && !odd && !adj.noInterval){
+      const r = reps(sc(BIKE_TUE[ph],'bike'), 10);
+      bt = {t:'실내 자전거 인터벌', d:`${powerTxt(0.95,1.05)} · 5분 × ${r}, 회복 5분 · 전날 강습이 강했거나 하체가 무거우면 존2로 낮추기`, p:'핵심'};
+    }
+    add(3,'bikeT','pm','bike', bt.t, bt.d, BIKE_TUE[ph], bt.p);
+    if(TRI_SWIM_LONG[i]) add(4,'swimR','pm','swim','수영 2km+ 연속 (강습 별도)','2km 이상 쉬지 않고 연속 · 편한 페이스 · 100m 2:30 기준 약 2.2km 이상 · 대회 거리 리허설이라 강습과 따로 해요 · 피곤하면 생략', TRI_SWIM_LONG[i], '핵심');
+    else if(OPEN_WATER[i]) add(4,'swimO','pm','swim','야외 수영 + 슈트 연습','바다·호수에서 슈트 입고 · 방향 잡기(사이팅) 연습 · 혼자 하지 말고 동반자·안전부표 · 수온 확인 · 어려우면 생략', OPEN_WATER[i], '보조');
+    else add(4,'runE','pm','run','쉬운 달리기','6:00/km 전후 · 대화 가능', TRI_THU[i-18], '보조');
     if(TRI_RUNCHECK[i]){
       const ev = checkEval(CTX.hist, i);
       const presc = sc(ev.level, 'run');                       // 실제 처방 시간 (주간 감량 적용 후)
@@ -380,26 +404,17 @@ function buildWeek(i, adj){
       const amount = presc < ev.level
         ? `감량 전 목표 ${ev.level}분 → 실제 처방 ${presc}분 (최근 수행 기준 감량)`
         : `실제 처방 ${presc}분`;
-      add(5,'longB','pm','bike','장거리 사이클 (토요일)', `${powerTxt(0.65,0.75)} 평균 유지 · ${bikeLocation()} · 지속주는 일요일로 분리 · 브릭 없음`, CHECK_BIKE[i], '핵심');
-      add(6,'long','pm','run','지속 확인 달리기 (일요일)', `6:00~6:20/km 편하게 · ${amount} · ${ev.first?'':`확인된 단계 ${ev.V}분 · `}${ev.why} · 보급 연습`, ev.level, '핵심');
+      add(longIdx,'long','pm','run','지속 확인 달리기', `6:00~6:20/km 편하게 · ${amount} · ${ev.first?'':`확인된 단계 ${ev.V}분 · `}${ev.why} · 보급 연습`, ev.level, '핵심');
+      add(otherIdx,'longB','pm','bike','자전거 (지속주 주 · 가볍게)', `${powerTxt(0.55,0.7)} · 주말 장시간 운동은 하루만 · 브릭 없음`, CHECK_BIKE[i], '보조');
     }
     else {
       add(longIdx,'long','pm','bike','장거리 사이클', `${powerTxt(0.65,0.75)} 평균 유지 · ${bikeLocation()}`, TRI_LONG[i-18], '핵심');
       add(longIdx,'brick','pm','run','브릭 런 (자전거 직후)','같은 날 자전거 끝나고 바로 · 처음 5분 쉬운 페이스 후 6:00/km 전후', TRI_BRICK[i-18], '핵심');
+      if(TRI_OTHER[i-18]>0) add(otherIdx,'runO','pm','run','쉬운 달리기 (주말 보조)','6:00~6:30/km · 대화 가능 · 긴 달리기 적응용 (선택)', TRI_OTHER[i-18], '선택');
+      else add(otherIdx,'restO','all','rest','휴식','완전 휴식', null, '선택');
     }
-    if(OPEN_WATER[i]) add(otherIdx,'swimO','pm','swim','야외 수영 + 슈트 연습','바다·호수에서 슈트 입고 · 방향 잡기(사이팅) 연습 · 혼자 하지 말고 동반자·안전부표 · 수온 확인', OPEN_WATER[i], '보조');
-    if(TRI_RUNCHECK[i]) { /* 지속주 주: 주말 보조 달리기 없음 */ }
-    else if(TRI_OTHER[i-18]>0) add(otherIdx,'runO','pm','run','쉬운 달리기 (주말 보조)','6:00~6:30/km · 대화 가능 · 긴 달리기 적응용 (선택)', TRI_OTHER[i-18], '선택');
-    else if(!OPEN_WATER[i]) add(otherIdx,'restO','all','rest','휴식','완전 휴식 (수영 20분 선택 가능)', null, '선택');
   }
   return days;
-}
-function swimMin(i){
-  const ph = phaseOf(i);
-  if(ph==='race') return 20; if(ph==='recover') return 25;
-  if(ph==='taper') return 25; if(ph==='ttaper') return 35;
-  if(i<=17) return Math.min(30, Math.round(18 + i*1.2));   // 주 1회 700m(약 18분)에서 시작
-  return Math.min(45, 30 + (i-18)*2);
 }
 
 /* ==================================================================
@@ -426,7 +441,7 @@ function inconsistency(it, lg){
 function evalWeek(days, unlog){
   const eff = {mostly_done:'done', half:'partial', mostly_missed:'skip'}[unlog] || null;
   const r = {str:{done:0,total:0}, unlogged:0, miss:0, total:0, entered:0, aer:[], disc:{run:[0,0],bike:[0,0],swim:[0,0]},
-             dm:{run:[0,0],bike:[0,0],swim:[0,0]}, actualMins:[]};
+             dm:{run:[0,0],bike:[0,0],swim:[0,0]}, actualMins:[], hardClass:0};
   days.forEach(day => day.items.forEach(it => {
     if(it.disc==='rest' || it.disc==='race' || it.hold) return;
     const lg = STATE.logs[it.id] || {};
@@ -435,6 +450,7 @@ function evalWeek(days, unlog){
     if(counted) r.total++;
     if(status) r.entered++;
     if(counted && !status){ r.unlogged++; if(eff) status = eff; }
+    if(it.cls && lg.effort==='hard' && (lg.status==='done' || lg.status==='partial')) r.hardClass++;
     if(status==='skip' && counted) r.miss++;
     if(it.disc==='str'){ if(counted){ r.str.total++; if(status==='done') r.str.done++; } return; }
     if(!counted || !it.min) return;
@@ -524,6 +540,7 @@ function adjFromClose(close, st){
   if(close.mood==='pain'){ a.mult = 0.7; a.quality = false; a.noInterval = true; a.notes.push('마감 몸 상태 통증 → 다음 주 유산소 30% 감량 · 고강도·인터벌 제외'); }
   else if(close.mood==='tired' || close.miss==='fatigue'){ a.mult = 0.85; a.quality = false; a.noInterval = true; a.notes.push('피로 신호 → 다음 주 유산소 15% 감량 · 고강도·인터벌 제외'); }
   else if(close.miss==='schedule') a.notes.push('일정으로 빠진 세션은 보충하지 않음 · 장거리·품질 세션 우선');
+  if(st && st.hardClass>=2) a.notes.push(`강습을 강하게 한 날이 ${st.hardClass}회 → 다음 주 고강도 달리기·자전거는 몸 상태를 보고 조절 (자동 감량 없음)`);
   if(st && st.discRatio){
     ['run','bike','swim'].forEach(k => {
       const r = st.discRatio[k];
@@ -580,9 +597,11 @@ function generate(){
   return out;
 }
 function weekTotals(days, i){
-  const t = {min:0, run:0, bike:0, swim:0, strN:0, longRun:0};
+  const t = {min:0, run:0, bike:0, swim:0, strN:0, longRun:0, classN:0};
   days.forEach(d => d.items.forEach(it => {
-    if(!it.min || it.hold) return;
+    if(it.hold) return;
+    if(it.cls){ t.classN++; return; }                 // 강습은 시간 미확정 → 총 시간·분 합계에 넣지 않음
+    if(!it.min) return;
     t.min += it.min;
     if(it.disc==='str') t.strN++;
     if(it.disc==='run'){ t.run += it.min/6.2; if(it.key==='long') t.longRun = it.min/6.2; }
@@ -591,6 +610,9 @@ function weekTotals(days, i){
   }));
   return t;
 }
+const fmtM = n => n.toLocaleString();
+const swimRange = t => `${fmtM(t.swim + t.classN*CLASS.lo)}~${fmtM(t.swim + t.classN*CLASS.hi)}m`;
+const swimRangeKm = t => `${((t.swim + t.classN*CLASS.lo)/1000).toFixed(1)}~${((t.swim + t.classN*CLASS.hi)/1000).toFixed(1)}`;
 function overLimit(days){
   const bad = [];
   days.slice(0,5).forEach((day,d) => day.items.forEach(it => { if(it.min && it.min>60) bad.push(`${DAYS[d]} ${it.title}`); }));
@@ -605,12 +627,22 @@ const opt = (v, label, cur) => `<option value="${v}" ${(cur??'')===v?'selected':
 function findPain(id){ return STATE.painOpen.find(p => p.id===id); }
 
 const EMO = {run:'🏃', bike:'🚴', swim:'🏊', str:'🏋️', race:'🏁', rest:'🌙'};
+// 전날 강습을 '강하게' 기록했는지 (같은 주의 강습 기록만 확인)
+function prevHard(it){
+  if(it.cls || it.disc==='rest' || it.disc==='race' || it.prio==='선택') return false;
+  const w = it.id.split('-')[0];
+  return Object.entries(CLASS.days).some(([k,d]) => {
+    const lg = STATE.logs[`${w}-${k}`];
+    return d===it.d-1 && lg && lg.effort==='hard' && (lg.status==='done' || lg.status==='partial');
+  });
+}
 function itemHTML(it){
   const lg = STATE.logs[it.id] || {};
   const d = DISC[it.disc] || DISC.rest;
   const isRest = it.disc==='rest', isRace = it.disc==='race';
   const change = (it.base!=null && it.min!=null && it.base!==it.min) ? `<div class="chg">원래 ${it.base}분 → ${it.min}분</div>` : '';
-  const plan = it.min ? `${it.min}분${it.dist?' · '+it.dist:''}` : '';
+  const plan = it.min ? `${it.min}분${it.dist?' · '+it.dist:''}` : (it.dist || '');
+  const tm = it.time ? `<span class="pr" style="background:var(--soft);color:var(--accent)">🕔 ${esc(it.time)}</span>` : '';
   const ico = `<div class="ico">${EMO[it.disc]||'•'}</div>`;
   if(it.hold){
     return `<div class="item" style="--c:${d.c}">${ico}<div>
@@ -627,15 +659,20 @@ function itemHTML(it){
   let ctrl = '';
   if(!isRest && !isRace) ctrl += `<button class="qd ${lg.status==='done'?'on':''}" data-act="quick" data-id="${it.id}">${lg.status==='done'?'✓ 완료됨':'완료'}</button>`;
   if(!isRest && !isRace) ctrl += `<select data-id="${it.id}" data-f="status">${opt('','미기록',lg.status)}${opt('done','완료',lg.status)}${opt('partial','일부',lg.status)}${opt('skip','미수행',lg.status)}</select>`;
+  if(it.cls && hasStatus){
+    ctrl += `<select data-id="${it.id}" data-f="effort">${opt('','강도 (선택)',lg.effort)}${Object.entries(EFFORT).map(([k,v])=>opt(k,v,lg.effort)).join('')}</select>`;
+    ctrl += `<input class="n" type="number" min="0" max="10000" step="50" placeholder="실제 거리 m (선택)" value="${lg.distM??''}" data-id="${it.id}" data-f="distM">`;
+  }
   if(it.min && it.disc!=='str' && (hasStatus || (lg.actual!==undefined && lg.actual!==''))) ctrl += `<input class="n" type="number" min="0" step="5" placeholder="실제 분 (선택)" value="${lg.actual??''}" data-id="${it.id}" data-f="actual">`;
   if(!isRest && !isRace && !pn) ctrl += `<button class="ghost" data-act="painAdd" data-id="${it.id}" data-disc="${it.disc}" data-week="${it.id.split('-')[0]}" data-d="${it.d}">통증 기록</button>`;
   if(pn) ctrl += `<select data-id="${it.id}" data-f="area">${AREAS.map(a=>opt(a,a,pn.area)).join('')}</select><button class="ghost" data-act="painClear" data-id="${it.id}">통증 해소 확인</button>`;
   return `<div class="item ${lg.status==='done'?'done':''}" style="--c:${d.c}">${ico}<div>
     <div class="tt">${esc(it.title)}</div>
-    <div class="meta"><span class="pr pr-${it.prio}">${it.prio}</span>${plan?`<span class="min num">${plan}</span>`:''}</div>
+    <div class="meta"><span class="pr pr-${it.prio}">${it.prio}</span>${tm}${plan?`<span class="min num">${plan}</span>`:''}</div>
     <div class="d">${esc(it.detail)}</div>${change}
     ${pn ? `<div class="sub" style="margin-top:4px">통증 기록 있음 (${esc(pn.area)}) · 수행 기록은 그대로 유지돼요.</div>` : ''}
     ${warn ? `<div class="warn">${esc(warn)}</div>` : ''}
+    ${prevHard(it) ? `<div class="warn">어제 강습을 강하게 했어요. 오늘은 몸 상태를 보고 강도·시간을 줄이거나 쉬운 훈련으로 바꿔도 돼요 (자동으로 줄어들지는 않아요).</div>` : ''}
     ${ctrl?`<div class="ctrl">${ctrl}</div>`:''}
   </div></div>`;
 }
@@ -650,7 +687,7 @@ function ringHTML(wk){
 }
 function weekPreview(i){
   return PLAN[i].days.map((day,d) => {
-    const names = day.items.filter(x=>x.disc!=='rest').map(x=>`${EMO[x.disc]}${x.min?x.min+'분':''}`).join(' ');
+    const names = day.items.filter(x=>x.disc!=='rest').map(x=>`${EMO[x.disc]}${x.cls?x.time:(x.min?x.min+'분':'')}`).join(' ');
     return `<div class="row" style="justify-content:space-between;padding:5px 0;border-top:1px solid var(--line)"><b>${DAYS[d]}</b><span class="sub">${names||'휴식'}</span></div>`;
   }).join('');
 }
@@ -726,7 +763,7 @@ function checkpointText(i){
     return `${n}주차 점검: 최근 장거리 마지막 구간을 ${pc}로 유지할 수 있는지 확인하세요. 어려우면 목표를 ${g==='b350'?'sub-4 또는 완주 중심':'완주 중심'}으로 바꾸는 것을 고려하세요.`;
   }
   if(i===18) return '수영 제한 시간 확인: 군산 T100 공식 안내에서 수영 컷오프를 먼저 확인해 두세요. 현재 100m 2:30 기준 2km는 약 50분이에요.';
-  if(TRI_SWIM_LONG[i]) return `금요일에 2km 이상 쉬지 않고 헤엄치는 날이 있어요 (${TRI_SWIM_LONG[i]}분). 대회 거리 리허설이라 속도보다 끝까지 편하게 이어가는 게 목표예요.`;
+  if(TRI_SWIM_LONG[i]) return `금요일(강습 없는 날)에 2km 이상 쉬지 않고 헤엄치는 대회 거리 리허설이 있어요 (${TRI_SWIM_LONG[i]}분). 강습과 별도이고, 피곤하면 생략해도 돼요. 대회 거리 리허설이라 속도보다 끝까지 편하게 이어가는 게 목표예요.`;
   if(OPEN_WATER[i]) return '이번 주는 야외(바다·호수) 수영과 슈트 연습이 있어요. 수온을 확인하고 혼자 들어가지 마세요.';
   return null;
 }
@@ -743,10 +780,10 @@ function renderWeek(){
     <div class="row"><select data-nav="week">${opts}</select></div>
     <div class="sub">${curW+1}주차 · ${fmt(s)} ~ ${fmt(e)} · ${PH[phaseOf(curW)]}${wk.closed?' · 확정됨 (저장된 계획 그대로)':''}</div>
     <div class="stat">
-      <div><span class="sub">계획 총 시간</span><strong class="num">${Math.round(t.min/60*10)/10}h</strong></div>
+      <div><span class="sub">계획 총 시간 (강습 제외)</span><strong class="num">${Math.round(t.min/60*10)/10}h</strong></div>
       <div><span class="sub">달리기 (약)</span><strong class="num">${t.run.toFixed(1)}km</strong></div>
       ${t.longRun>0 && t.run>0 && curW<=15 ? `<div><span class="sub">장거리 비중 (달리기 거리)</span><strong class="num">${Math.round(t.longRun/t.run*100)}%</strong></div>` : ''}
-      <div><span class="sub">수영 (약)</span><strong class="num">${t.swim}m</strong></div>
+      <div><span class="sub">수영 (예상)</span><strong class="num">${swimRange(t)}</strong></div>
       <div><span class="sub">자전거</span><strong class="num">${Math.round(t.bike)}분</strong></div>
       <div><span class="sub">근력</span><strong class="num">${r.str.done}/${r.str.total} 완료</strong></div>
       <div><span class="sub">달리기 · 자전거 · 수영</span><strong class="num">${dRate('run')} · ${dRate('bike')} · ${dRate('swim')}</strong></div>
@@ -774,12 +811,12 @@ function renderRoad(){
     return `<tr class="clk ${p.i===curI?'cur':''}" data-goto="${p.i}">
       <td class="num">${p.i+1}</td><td class="num">${fmt(s)}~${fmt(e)}</td><td>${PH[phaseOf(p.i)]}</td>
       <td class="num">${Math.round(t.min/60*10)/10}h<div class="bar"><i style="width:${Math.round(t.min/60/maxH*100)}%"></i></div></td><td class="num">${t.run.toFixed(1)}</td>
-      <td class="num">${t.swim}</td><td class="num">${Math.round(t.bike)}</td><td class="num">${t.strN}</td><td>${st}</td></tr>`;
+      <td class="num">${swimRangeKm(t)}</td><td class="num">${Math.round(t.bike)}</td><td class="num">${t.strN}</td><td>${st}</td></tr>`;
   }).join('');
   return `<div class="panel">
-    <div class="sub">행을 누르면 해당 주로 이동해요. 달리기 km와 수영 m은 시간 기준 추정치예요.</div>
+    <div class="sub">행을 누르면 해당 주로 이동해요. 달리기 km는 시간 기준 추정치예요. 수영은 월·수 17:00 강습의 예상 거리(회당 1,000~1,500m)이고, 강습 시간은 총 시간에 넣지 않았어요.</div>
     <div style="overflow-x:auto;margin-top:8px"><table>
-      <tr><th>주</th><th>기간</th><th>단계</th><th>총 시간</th><th>달리기 km</th><th>수영 m</th><th>자전거 분</th><th>근력 횟수</th><th>상태</th></tr>
+      <tr><th>주</th><th>기간</th><th>단계</th><th>총 시간</th><th>달리기 km</th><th>수영 km(예상)</th><th>자전거 분</th><th>근력 횟수</th><th>상태</th></tr>
       ${rows}</table></div>
   </div>`;
 }
@@ -927,6 +964,8 @@ function validLogs(logs){
     if(!v || typeof v!=='object'){ errs.push(`기록 값: ${k}`); return; }
     if(!['','done','partial','skip'].includes(v.status ?? '')) errs.push(`상태 값: ${k}`);
     if(v.actual!==undefined && v.actual!=='' && !(Number(v.actual)>=0 && Number(v.actual)<=600)) errs.push(`실제 분 범위: ${k}`);
+    if(v.effort!==undefined && !['','easy','mod','hard'].includes(v.effort)) errs.push(`강습 강도 값: ${k}`);
+    if(v.distM!==undefined && v.distM!=='' && !(Number(v.distM)>=0 && Number(v.distM)<=10000)) errs.push(`실제 거리 범위: ${k}`);
   });
   return errs;
 }
@@ -1094,6 +1133,8 @@ document.addEventListener('change', e => {
   if(el.dataset.id){
     const lg = STATE.logs[el.dataset.id] = {...(STATE.logs[el.dataset.id]||{})};
     if(el.dataset.f==='actual') lg.actual = el.value==='' ? '' : Number(el.value);
+    else if(el.dataset.f==='distM') lg.distM = el.value==='' ? '' : Number(el.value);
+    else if(el.dataset.f==='effort') lg.effort = el.value;
     else lg.status = el.value;
     markDirty(); refresh();
   }

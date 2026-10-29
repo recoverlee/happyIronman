@@ -1,4 +1,4 @@
-const CACHE = 'training-plan-v5';
+const CACHE = 'training-plan-v6';
 const ASSETS = ['./', 'index.html', 'manifest.webmanifest', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/icon-maskable-512.png', 'icons/apple-touch-icon.png'];
 
 self.addEventListener('install', e => {
