@@ -189,12 +189,11 @@ const EASY = {base:40,build:50,peak:55,taper:30,race:20,recover:20,tbase:45,tbui
 const QUAL = {base:45,build:55,peak:55,taper:35,race:20,tbase:40,tbuild:50,ttaper:35};
 const MAR_FRI = {8:30,9:35,10:30,11:40,12:45,13:45,14:30};          // 금요일 쉬운 달리기 (분) · 피크 주 장거리 비중 낮추기
 const BIKE_TUE = {base:50,build:55,peak:45,taper:35,race:20,recover:30,tbase:50,tbuild:60,ttaper:40};
-// 근력: [기록 키, 요일]. 하체는 수요일 아침(주요 달리기 사이), 상체는 목요일 아침(다음 강습까지 간격 확보). 월·수 17시 수영 강습 전에는 상체를 피함
-const STR_PLAN = {base:[['str0',2],['str3',3]], build:[['str0',2],['str3',3]], peak:[['str0',2],['str3',3]], taper:[['str3',3]],
-                  tbase:[['str0',2],['str3',3]], tbuild:[['str0',2],['str3',3]], ttaper:[['str3',3]], race:[], recover:[]};
-const STR_MIN  = {base:60,build:55,peak:50,taper:35,tbase:60,tbuild:55,ttaper:35,race:0,recover:20};
-const STR_NAME = {str0:'하체 (스쿼트·루마니안 데드·레그프레스)', str3:'상체 (벤치·로우·풀다운·숄더프레스) · 어깨는 가볍게'};
-const STR_DETAIL = {base:'3세트 × 8~10회 · 여유 있는 무게', build:'3세트 × 8~10회', peak:'3세트 × 5~6회 · 무게는 올리고 세트는 줄이기',
+// 근력: 평일 아침 4회 [기록 키, 요일] · 화 가슴 / 수 하체 / 목 어깨 / 금 등. 월·수 17시 강습 전 당일 상체는 피하고, 하체는 주요 달리기 전날을 피함
+const STR_WEEK = [['str1',1],['str0',2],['str4',3],['str3',4]];
+const STR_MIN  = {base:50,build:50,peak:45,taper:30,tbase:50,tbuild:45,ttaper:30,race:25,recover:25};
+const STR_NAME = {str0:'하체 (스쿼트·루마니안 데드·레그프레스)', str1:'가슴 (벤치프레스·인클라인 덤벨·케이블 플라이)', str4:'어깨 (사이드·리어 레이즈·가벼운 숄더프레스)', str3:'등 (로우·랫풀다운·페이스풀)'};
+const STR_DETAIL = {recover:'2세트 × 12회 · 아주 가볍게 · 피로·통증이 있으면 쉬기', race:'2세트 × 10회 · 가볍게 · 피로를 남기지 않기 (쉬어도 돼요)', base:'3세트 × 8~10회 · 여유 있는 무게', build:'3세트 × 8~10회', peak:'3세트 × 5~6회 · 무게는 올리고 세트는 줄이기',
                     taper:'2세트 × 10회 · 피로 남기지 않기', tbase:'3세트 × 8~10회', tbuild:'3세트 × 6~8회 · 점프 동작 없이', ttaper:'2세트 × 10회 · 가볍게'};
 const SWIM_SEC = 150;   // 현재 확인된 100m당 2:30. 향상은 자동으로 가정하지 않음 (실제 확인 후 갱신)
 const BODY_START = 77.7, FAT_START = 25;
@@ -331,13 +330,18 @@ function buildWeek(i, adj){
       detail:`자유형 위주 · 세부 구성은 강습을 따라요 (별도 드릴·인터벌 처방 없음) · 거리와 강도는 강습 내용에 따라 달라질 수 있어요. ${CLASS_NOTE[ph]}`,
       min:null, base:null, dist:`예상 ${CLASS.lo.toLocaleString()}~${CLASS.hi.toLocaleString()}m`, prio:CLASS_PRIO[ph]});
   };
-  const strengthNote = (key) => key==='str0'
-    ? (ph==='peak' ? ' · 오늘 17:00 강습이 있어요 (킥이 무거울 수 있어요) · 토요일 장거리 전 하체는 이날이 마지막' : ' · 오늘 17:00 강습이 있어요 (킥이 무거울 수 있어요) · 한계까지 하지 않기')
-    : ' · 다음 강습(월)까지 간격이 있어요 · 어깨 피로를 남기지 않기';
+  const strengthNote = (key) => ({
+    str1: ' · 내일(수) 17:00 강습이 있어요 · 한계까지 하지 않기',
+    str0: ph==='peak' ? ' · 오늘 17:00 강습이 있어요 (킥이 무거울 수 있어요) · 토요일 장거리 전 하체는 이날이 마지막' : ' · 오늘 17:00 강습이 있어요 (킥이 무거울 수 있어요) · 한계까지 하지 않기',
+    str4: ' · 어제 강습으로 어깨가 피곤할 수 있어요 · 가볍게 · 다음 강습(월)까지 간격 확보',
+    str3: ' · 토요일 장거리 전이라 무리하지 않기 · 다음 강습(월)까지 간격이 있어요'}[key]);
+  const addStrength = (prio, skipLower) => STR_WEEK.forEach(([key,d]) => add(d, key, 'am', 'str', `근력 · ${STR_NAME[key]}`,
+    STR_DETAIL[ph] + strengthNote(key) + (skipLower && key==='str0' ? ' · 이 주에는 하체를 쉬는 걸 권해요' : ''), STR_MIN[ph], prio));
 
   /* 대회 주: 대회는 일요일, 근력 없음, 달리기는 짧고 익숙하게 나눠서 · 강습은 선택 */
   if(ph==='race'){
     addClass('swimA');
+    addStrength('선택', true);
     add(1,'runT','pm','run','쉬운 달리기 (익숙한 페이스)','6:00~6:30/km · 대화 가능', 20, '보조');
     addClass('swimB');
     if(adj.quality) add(3,'runQ','pm','run','스트라이드','100m 가속 4~6회 · 충분히 쉰 뒤 가볍게', QUAL.race, '선택');
@@ -352,7 +356,8 @@ function buildWeek(i, adj){
   /* 회복 주: 인터벌·장거리 자동 배정 없음, 달리기는 통증·피로 없을 때만 · 강습은 선택 */
   if(ph==='recover'){
     addClass('swimA');
-    add(1,'mob','am','str','가동성 · 스트레칭','20분 · 통증 부위가 있으면 기록', STR_MIN.recover, '선택');
+    add(0,'mob','am','str','가동성 · 스트레칭','20분 · 통증 부위가 있으면 기록', 20, '선택');
+    addStrength('선택', false);
     addClass('swimB');
     add(3,'runE','pm','run','쉬운 달리기 (선택)','통증·피로가 없을 때만 20분 · 아니면 쉬기', EASY.recover, '선택');
     add(4,'bikeT','pm','bike','실내 자전거 쉬운 주행', `${powerTxt(0.4,0.5)} · 30분 · 통증·피로 확인`, BIKE_TUE.recover, '보조');
@@ -362,7 +367,7 @@ function buildWeek(i, adj){
   }
 
   /* 근력: 평일 아침 (하체는 수요일, 상체는 목요일) */
-  (STR_PLAN[ph] || []).forEach(([key,d]) => add(d, key, 'am', 'str', `근력 · ${STR_NAME[key]}`, STR_DETAIL[ph] + strengthNote(key), STR_MIN[ph], '보조'));
+  addStrength('보조', false);
 
   addClass('swimA');
   addClass('swimB');
